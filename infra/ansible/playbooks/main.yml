@@ -26,8 +26,6 @@
         image: "ghcr.io/{{ lookup('env', 'IMAGE_NAME') }}:{{ lookup('env', 'IMAGE_TAG') }}"
         networks:
           - name: minecraft
-        volumes:
-          - /storage/minecraft/data/mods:/minecraft/mods
         env:
           STATUS_API_URL: "{{ lookup('env', 'STATUS_API_URL') }}"
           DISCORD_BOT_TOKEN: "{{ lookup('env', 'DISCORD_BOT_TOKEN') }}"
