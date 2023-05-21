@@ -1,5 +1,7 @@
 # MineDiscBot
 
+![MineDiscBot](https://repository-images.githubusercontent.com/643495698/fcd44add-fcf1-4469-bd15-b6b04113618b)
+
 ## Table of contents
 - [MineDiscBot](#minediscbot)
   - [Table of contents](#table-of-contents)
