@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  minediscbot:
+    container_name: minediscbot
+    image: ${APP_IMAGE_NAME:-minediscbot}:latest
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile
+    volumes:
+      - ../../app:/usr/src/app
+    env_file:
+      - ../../app/.env
+    deploy:
+      resources:
+        limits:
+          memory: 25M
+        reservations:
+          memory: 10M
+    tty: true
+    command: sh
+    restart: on-failure:5

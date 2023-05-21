@@ -1,0 +1,44 @@
+---
+- name: Deploy service
+  hosts: all
+
+  tasks:
+    - name: Log into github private registry
+      docker_login:
+        registry: ghcr.io
+        username: "{{ lookup('env', 'REPOSITORY_USERNAME') }}"
+        password: "{{ lookup('env', 'GHCR_PAT') }}"
+
+    - name: Pull docker image
+      docker_image:
+        name: "ghcr.io/{{ lookup('env', 'IMAGE_NAME') }}"
+        tag: "{{ lookup('env', 'IMAGE_TAG') }}"
+        source: pull
+        force_source: yes
+
+    - name: Create docker network
+      docker_network:
+        name: minecraft
+
+    - name: Run minediscbot service
+      docker_container:
+        name: minediscbot
+        image: "ghcr.io/{{ lookup('env', 'IMAGE_NAME') }}:{{ lookup('env', 'IMAGE_TAG') }}"
+        networks:
+          - name: minecraft
+        volumes:
+          - /storage/minecraft/data/mods:/minecraft/mods
+        env:
+          STATUS_API_URL: "{{ lookup('env', 'STATUS_API_URL') }}"
+          DISCORD_BOT_TOKEN: "{{ lookup('env', 'DISCORD_BOT_TOKEN') }}"
+          DISCORD_PLAY_GAME: "{{ lookup('env', 'DISCORD_PLAY_GAME') }}"
+          DISCORD_STATUS_CHANNEL_ID: "{{ lookup('env', 'DISCORD_STATUS_CHANNEL_ID') }}"
+          DISCORD_PLAYERS_CHANNEL_ID: "{{ lookup('env', 'DISCORD_PLAYERS_CHANNEL_ID') }}"
+        container_default_behavior: no_defaults
+        recreate: yes
+        state: started
+        restart_policy: always
+
+    - name: Prune docker images
+      community.docker.docker_prune:
+        images: yes
